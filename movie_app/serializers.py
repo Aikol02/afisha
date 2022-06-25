@@ -20,6 +20,12 @@ class DirectorDetailSerializers(serializers.ModelSerializer):
 class ReviweSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
+        fields = "__all__"
+
+
+class ReviewDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
         fields = "id text movie stars rating ".split()
 
 

@@ -42,7 +42,7 @@ class Movie(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     duration = models.PositiveIntegerField()
-    director = models.ForeignKey(Director, on_delete=models.CASCADE)
+    director = models.ForeignKey(Director, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.title
@@ -55,7 +55,7 @@ class Movie(models.Model):
 class Review(models.Model):
     stars = models.IntegerField(choices=RATING, default=5, null=True)
     text = models.TextField()
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="review")
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="review",null=True)
 
     def __str__(self):
         return self.text
