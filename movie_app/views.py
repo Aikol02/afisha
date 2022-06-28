@@ -5,7 +5,9 @@ from .serializers import (
     DirectorDetailSerializers,
     MovieSerializer,
     MovieDetailSerializer,
-    ReviweSerializer,ReviewDetailSerializer
+    ReviweSerializer,ReviewDetailSerializer,
+    DirectorValidateSerializer,
+    MovieValidateSerializer,ReviewValidateCreateUpdateSerializer
 )
 from .models import Director, Movie, Review
 from rest_framework import status
@@ -13,6 +15,10 @@ from rest_framework import status
 
 @api_view(["GET","POST"])
 def director_list_view(request):
+    serializer = DirectorValidateSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(status=status.HTTP_406_NOT_ACCEPTABLE,
+                        data={"eror":serializer.errors})
     if request.method == "GET":
         persons = Director.objects.all()
         data = DirectorSerializers(persons, many=True).data
@@ -58,6 +64,10 @@ def director_detail_view(request, id):
 
 @api_view(["GET","POST"])
 def movie_list_view(request):
+    serializer = MovieValidateSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(status=status.HTTP_406_NOT_ACCEPTABLE,
+                        data={"eror": serializer.errors})
     if request.method == "GET":
         mov = Movie.objects.all()
         data = MovieSerializer(mov, many=True,).data
@@ -117,6 +127,10 @@ def movie_detail_view(request, id):
 
 @api_view(["GET","POST"])
 def review_list_view(request):
+    serializer = ReviewValidateCreateUpdateSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(status=status.HTTP_406_NOT_ACCEPTABLE,
+                        data={"eror": serializer.errors})
     persons = Review.objects.all()
     if request.method == "GET":
         data = ReviweSerializer(persons, many=True).data
@@ -157,3 +171,5 @@ def review_detail_view(request,id):
         rew.save()
 
         return Response(data=MovieDetailSerializer(rew).data)
+
+
