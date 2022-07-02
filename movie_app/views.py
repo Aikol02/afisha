@@ -1,4 +1,4 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from .serializers import (
     DirectorSerializers,
@@ -7,13 +7,47 @@ from .serializers import (
     MovieDetailSerializer,
     ReviweSerializer,ReviewDetailSerializer,
     DirectorValidateSerializer,
-    MovieValidateSerializer,ReviewValidateCreateUpdateSerializer
+    MovieValidateSerializer,ReviewValidateCreateUpdateSerializer,
+    UserCreateSerializer,UserLoginSerializer
+
+
 )
 from .models import Director, Movie, Review
 from rest_framework import status
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+
+from django.contrib.auth.models import User
+from rest_framework.permissions import IsAuthenticated
 
 
-@api_view(["GET","POST"])
+
+@api_view(['POST'])
+def register_view(request):
+    serializer = UserCreateSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    user = User.objects.create_user(**serializer.validated_data)
+    return Response(status=status.HTTP_201_CREATED,
+                    data={'user_id':user.id})
+
+
+@api_view(['POST'])
+def login_view(request):
+    serializer = UserLoginSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    print(serializer.validated_data)
+    user = authenticate(**serializer.validated_data)
+    # username=serializer.validated_data['username'],password=serializer.validated_data['password']
+    if user:
+        try:
+            token = Token.objects.get(user=user)
+        except Token.DoesNotExist:
+            token = Token.objects.create(user=user)
+        return Response(data={'key':token.key})
+    return Response(status=status.HTTP_403_FORBIDDEN)
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def director_list_view(request):
     serializer = DirectorValidateSerializer(data=request.data)
     if not serializer.is_valid():
