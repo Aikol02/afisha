@@ -16,16 +16,31 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from movie_app import views
-
+from . import swagger
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/v1/directors/", views.director_list_view),
-    path("api/v1/directors/<int:id>/", views.director_detail_view),
-    path("api/v1/movie/", views.movie_list_view),
-    path("api/v1/movie/<int:id>/", views.movie_detail_view),
-    path("api/v1/movie/reviwe/", views.review_list_view),
-    path("api/v1/movie/reviwe/<int:id>/", views.review_detail_view),
-    path('api/v1/login/', views.login_view),
-    path('api/v1/register/', views.register_view),
+    path("api/v1/directors/", views.DirectorModelViewSet.as_view({'get':'list','post':'create'})),
+    path("api/v1/directors/<int:pk>/", views.DirectorModelViewSet.as_view({'get':'retrieve',
+                                                                            'put':'update',
+                                                                            'delete':'destroy'})),
+    path("api/v1/movie/", views.MovieModelViewSet.as_view({'get':'list','post':'create'})),
+    path("api/v1/movie/<int:pk>/", views.MovieModelViewSet.as_view({'get':'retrieve',
+                                                                    'put':'update',
+                                                                    'delete':'destroy'})),
+    path("api/v1/movie/reviwe/", views.ReviewModelViewSet.as_view({'get':'list','post':'create'})),
+    path("api/v1/movie/reviwe/<int:pk>/", views.ReviewModelViewSet.as_view({'get':'retrieve',
+                                                                            'put':'update',
+                                                                            'delete':'destroy'})),
+    path('api/v1/login/', views.LoginAPIView.as_view()),
+    path('api/v1/register/', views.RegisterAPIView.as_view()),
+    path('api/v1/ganrs/', views.GanreAPIView.as_view()),
+    path('api/v1/ganrs/<int:pk>/', views.GanreItemUpdateDeleteAPIView.as_view()),
+    path('api/v1/tags/', views.TagModelViewSet.as_view({'get':'list','post':'create'})),
+    path('api/v1/tags/<int:pk>', views.TagModelViewSet.as_view({'get':'retrieve',
+                                                             'put':'update',
+                                                             'delete':'destroy'})),
+
+
 
 ]
+urlpatterns += swagger.urlpatterns
