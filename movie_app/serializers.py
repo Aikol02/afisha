@@ -10,7 +10,6 @@ class DirectorSerializers(serializers.ModelSerializer):
         model = Director
         fields = "id name ".split()
 
-
 class DirectorDetailSerializers(serializers.ModelSerializer):
     class Meta:
         model = Director
